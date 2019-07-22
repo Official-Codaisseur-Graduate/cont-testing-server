@@ -9,6 +9,7 @@ This app shows student progress in data transformation exercises in real time. I
 To install and run this app:
 
 Currently the server is deployed to Heroku on https://continuous-testing.herokuapp.com/
+**Github:** git@github.com:Official-Codaisseur-Graduate/cont-testing-server.git
 
 **config vars**
 
