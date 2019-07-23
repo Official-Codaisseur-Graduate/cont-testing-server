@@ -45,9 +45,30 @@ router.get('/evaluations', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/evaluations-by-question', (req, res, next) => {
+router.get('/evaluations-by-question/:range', (req, res, next) => {
+  // Get Date Range interested in.
+  const rangeDate = req.params.range 
+  console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
+  const currentDate = new Date()
+  const selectedRange = new Date()
+
+  const range = {
+    'today': 0,
+    'lastWeek': 7,
+    'lastMonth': 30,
+    'lastYear': 365,
+    'allData': 365*5
+  }
+ 
+  selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+
   Evaluation
     .findAll({
+      where: {
+        createdAt: {
+          [Op.gt]: selectedRange
+        }
+      },
       attributes: [['studentId', 'studentId'], ['questionId', 'questionId']],
       group: ['studentId', 'questionId'],
       order: [['studentId', 'ASC'], ['questionId', 'ASC'],],
@@ -379,8 +400,9 @@ router.get('/evaluations-by-question-student', (req, res, next) => {
     })
 })
 
-router.get('/evaluations-by-date', (req, res, next) => {
-  const rangeDate = req.body.rangeDate || 'lastWeek'
+router.get('/evaluations-by-date/:range', (req, res, next) => {
+  const rangeDate = req.params.range 
+
   const currentDate = new Date()
   const selectedRange = new Date()
 
@@ -392,6 +414,8 @@ router.get('/evaluations-by-date', (req, res, next) => {
   }
  
   selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+
+  console.log('SELECTED RANGE!!!!', selectedRange)
 
   Evaluation
     .findAll({
@@ -405,7 +429,6 @@ router.get('/evaluations-by-date', (req, res, next) => {
       res.status(200).send(evaluations)
     })
   
-
 })
 
 
