@@ -4,6 +4,7 @@ const Evaluation = require('./model');
 const Student = require('../students/model');
 const Question = require('../questions/model');
 const Exercise = require('../exercises/model')
+const { Op } = require('sequelize')
 
 
 router.get('/evaluations', (req, res, next) => {
@@ -378,7 +379,34 @@ router.get('/evaluations-by-question-student', (req, res, next) => {
     })
 })
 
+router.get('/evaluations-by-date', (req, res, next) => {
+  const rangeDate = req.body.rangeDate || 'lastWeek'
+  const currentDate = new Date()
+  const selectedRange = new Date()
 
+  const range = {
+    'today': 0,
+    'lastWeek': 7,
+    'lastMonth': 30,
+    'lastYear': 365
+  }
+ 
+  selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+
+  Evaluation
+    .findAll({
+      where: {
+        createdAt: {
+          [Op.gt]: selectedRange
+        }
+      }
+    })
+    .then( evaluations => {
+      res.status(200).send(evaluations)
+    })
+  
+
+})
 
 
 module.exports = router
