@@ -41,6 +41,7 @@ router.get('/students', (req, res, next) => {
         students, total
       })
       .then(students => {
+        console.log('Student!!:', students)
         res.json({ students: students })
       })
       .catch(error => next(error))
@@ -81,5 +82,7 @@ router.delete('/students/:id', (req, res, next) => {
   .then(res.json({ message: `Student deleted` }))
   .catch(error => next(error))
 })
+
+
 
 module.exports = router

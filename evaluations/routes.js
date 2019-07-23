@@ -163,65 +163,64 @@ router.get('/evaluations-by-student', (req, res, next) => {
     .catch(error => next(error))
 })
 
-      router.get('/stack-evaluations-by-student', (req, res, next) => {
-        Evaluation
-        .findAll({attributes:[['studentId','studentId'], ['questionId','questionId']],
-          group: ['studentId','questionId'],
-          order:[['studentId', 'ASC'],['questionId', 'ASC'],],
-         })
-         .then(evaluations => {
-            const evaluationArray =  evaluations.map(evaluation => {
-              return Evaluation
-                .findAll({
-                  include: [ {model: Student},
-                    {model: Question, include: [Exercise]} 
-                   ],
-                  limit: 1,
-                  where: {
-                    studentId: evaluation.studentId,
-                    questionId: evaluation.questionId
-                  },
-                  order: [ [ 'createdAt', 'DESC' ]]
-                })
-                .then(fullEvaluation => {
-                  return fullEvaluation
-                })
-                .catch(error => next(error)) 
-            })
-      
-            Promise.all(evaluationArray)
-            .then( results => {
-              //map over evaluationArray and gets students gitName
-              const repeatedStudents = results.map( result => {
-                return result[0].dataValues.student.gitName
-                })
-              //make sure there is no repeating students
-              const distinctStudent = [...new Set(repeatedStudents.sort())]
-    
-              //map over students name and for each student filter only the passed
-              const attemptedPerStudent = distinctStudent.map(distinctStudentName => {
-                const filteredAtt = results.filter(evaluation =>  {
-                return evaluation[0].dataValues.student.gitName === distinctStudentName
-                  && 
-                  evaluation[0].dataValues.attempted
-                })
-                  const filteredPass = filteredAtt.filter(attemptedEvaluation =>  {
-                  return attemptedEvaluation[0].dataValues.passed
-                  })
-                //return an object with student gitName and number of questions attempted
-                return { studentName: distinctStudentName,
-                        questionsAttempted: filteredAtt.length,
-                        questionsPassed: filteredPass.length,
-                        questionsFailed: filteredAtt.length-filteredPass.length
-                      }
-              })
-               return res.send({ attemptedPerStudent })
-            })
-            .catch(error => next(error))   
+router.get('/stack-evaluations-by-student', (req, res, next) => {
+  Evaluation
+  .findAll({attributes:[['studentId','studentId'], ['questionId','questionId']],
+    group: ['studentId','questionId'],
+    order:[['studentId', 'ASC'],['questionId', 'ASC'],],
+    })
+    .then(evaluations => {
+      const evaluationArray =  evaluations.map(evaluation => {
+        return Evaluation
+          .findAll({
+            include: [ {model: Student},
+              {model: Question, include: [Exercise]} 
+              ],
+            limit: 1,
+            where: {
+              studentId: evaluation.studentId,
+              questionId: evaluation.questionId
+            },
+            order: [ [ 'createdAt', 'DESC' ]]
           })
-            .catch(error => next(error))
+          .then(fullEvaluation => {
+            return fullEvaluation
+          })
+          .catch(error => next(error)) 
+      })
+
+      Promise.all(evaluationArray)
+      .then( results => {
+        //map over evaluationArray and gets students gitName
+        const repeatedStudents = results.map( result => {
+          return result[0].dataValues.student.gitName
+          })
+        //make sure there is no repeating students
+        const distinctStudent = [...new Set(repeatedStudents.sort())]
+
+        //map over students name and for each student filter only the passed
+        const attemptedPerStudent = distinctStudent.map(distinctStudentName => {
+          const filteredAtt = results.filter(evaluation =>  {
+          return evaluation[0].dataValues.student.gitName === distinctStudentName
+            && 
+            evaluation[0].dataValues.attempted
+          })
+            const filteredPass = filteredAtt.filter(attemptedEvaluation =>  {
+            return attemptedEvaluation[0].dataValues.passed
+            })
+          //return an object with student gitName and number of questions attempted
+          return { studentName: distinctStudentName,
+                  questionsAttempted: filteredAtt.length,
+                  questionsPassed: filteredPass.length,
+                  questionsFailed: filteredAtt.length-filteredPass.length
+                }
         })
-  
+          return res.send({ attemptedPerStudent })
+      })
+      .catch(error => next(error))   
+    })
+      .catch(error => next(error))
+  })
 
 router.get('/all-evaluations', (req, res, next) => {
   Evaluation
@@ -378,6 +377,8 @@ router.get('/evaluations-by-question-student', (req, res, next) => {
         )})
     })
 })
+
+
 
 
 module.exports = router
