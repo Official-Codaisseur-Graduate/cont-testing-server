@@ -45,9 +45,9 @@ router.get('/evaluations', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/evaluations-by-question/:range', (req, res, next) => {
+router.get('/evaluations-by-question/', (req, res, next) => {
   // Get Date Range interested in.
-  const rangeDate = req.params.range 
+  const rangeDate = req.query.range 
   console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
   const currentDate = new Date()
   const selectedRange = new Date()
@@ -128,9 +128,9 @@ router.get('/evaluations-by-question/:range', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/evaluations-by-student/:range', (req, res, next) => {
+router.get('/evaluations-by-student/', (req, res, next) => {
   // Get Date Range interested in.
-  const rangeDate = req.params.range 
+  const rangeDate = req.query.range 
   console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
   const currentDate = new Date()
   const selectedRange = new Date()
@@ -206,10 +206,10 @@ router.get('/evaluations-by-student/:range', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/stack-evaluations-by-student/:range', (req, res, next) => {
+router.get('/stack-evaluations-by-student/', (req, res, next) => {
 
   // Get Date Range interested in.
-  const rangeDate = req.params.range 
+  const rangeDate = req.query.range 
   console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
   const currentDate = new Date()
   const selectedRange = new Date()
@@ -396,10 +396,10 @@ router.post('/evaluations', (req, res, next) => {
     })
 })
 
-router.get('/evaluations-by-question-student/:range', (req, res, next) => {
+router.get('/evaluations-by-question-student/', (req, res, next) => {
 
    // Get Date Range interested in.
-   const rangeDate = req.params.range 
+   const rangeDate = req.query.range 
    console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
    const currentDate = new Date()
    const selectedRange = new Date()
