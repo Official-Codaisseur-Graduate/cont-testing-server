@@ -128,9 +128,30 @@ router.get('/evaluations-by-question/:range', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/evaluations-by-student', (req, res, next) => {
+router.get('/evaluations-by-student/:range', (req, res, next) => {
+  // Get Date Range interested in.
+  const rangeDate = req.params.range 
+  console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
+  const currentDate = new Date()
+  const selectedRange = new Date()
+
+  const range = {
+    'today': 0,
+    'lastWeek': 7,
+    'lastMonth': 30,
+    'lastYear': 365,
+    'allData': 365*5
+  }
+ 
+  selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+
   Evaluation
     .findAll({
+      where: {
+        createdAt: {
+          [Op.gt]: selectedRange
+        }
+      },
       attributes: [['studentId', 'studentId'], ['questionId', 'questionId']],
       group: ['studentId', 'questionId'],
       order: [['studentId', 'ASC'], ['questionId', 'ASC'],],
@@ -377,6 +398,7 @@ router.get('/evaluations-by-question-student/:range', (req, res, next) => {
           [Op.gt]: selectedRange
         }
       },
+
       attributes: [['studentId', 'studentId'], ['questionId', 'questionId']],
       group: ['studentId', 'questionId'],
       order: [['studentId', 'ASC'], ['questionId', 'ASC'],],
