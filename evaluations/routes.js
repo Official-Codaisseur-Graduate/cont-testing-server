@@ -53,7 +53,7 @@ router.get('/evaluations-by-question/', (req, res, next) => {
   const selectedRange = new Date()
 
   const range = {
-    'today': 0,
+    'today': 1,
     'lastWeek': 7,
     'lastMonth': 30,
     'lastYear': 365,
@@ -61,6 +61,14 @@ router.get('/evaluations-by-question/', (req, res, next) => {
   }
  
   selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+  // Exercise.findAll({
+  //   where: {package_version: "data-transformations@1.2.0"},
+  //   include: [{ model: Question }]
+  // })
+  // .then( result => {
+  //   console.log('Results', result)
+  // })
+
 
   Evaluation
     .findAll({
@@ -136,7 +144,7 @@ router.get('/evaluations-by-student/', (req, res, next) => {
   const selectedRange = new Date()
 
   const range = {
-    'today': 0,
+    'today': 1,
     'lastWeek': 7,
     'lastMonth': 30,
     'lastYear': 365,
@@ -215,7 +223,7 @@ router.get('/stack-evaluations-by-student/', (req, res, next) => {
   const selectedRange = new Date()
 
   const range = {
-    'today': 0,
+    'today': 1,
     'lastWeek': 7,
     'lastMonth': 30,
     'lastYear': 365,
@@ -405,7 +413,7 @@ router.get('/evaluations-by-question-student/', (req, res, next) => {
    const selectedRange = new Date()
  
    const range = {
-     'today': 0,
+     'today': 1,
      'lastWeek': 7,
      'lastMonth': 30,
      'lastYear': 365,
@@ -497,6 +505,8 @@ router.get('/evaluations-by-date/:range', (req, res, next) => {
     })
   
 })
+
+
 
 
 module.exports = router
