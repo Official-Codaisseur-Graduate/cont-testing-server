@@ -4,6 +4,7 @@ const Evaluation = require('./model');
 const Student = require('../students/model');
 const Question = require('../questions/model');
 const Exercise = require('../exercises/model')
+const { Op } = require('sequelize')
 
 
 router.get('/evaluations', (req, res, next) => {
@@ -44,9 +45,41 @@ router.get('/evaluations', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/evaluations-by-question', (req, res, next) => {
+router.get('/evaluations-by-question/', (req, res, next) => {
+  // Get Date Range interested in.
+  const rangeDate = req.query.range
+  const version = req.query.version
+
+  console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
+  const currentDate = new Date()
+  const selectedRange = new Date()
+
+  const range = {
+    'today': 1,
+    'lastWeek': 7,
+    'lastMonth': 30,
+    'lastYear': 365,
+    'allData': 365*5
+  }
+ 
+  selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+  
+  // Exercise.findAll({
+  //   where: {package_version: "data-transformations@1.2.0"},
+  //   include: [{ model: Question }]
+  // })
+  // .then( result => {
+  //   console.log('Results', result)
+  // })
+
   Evaluation
     .findAll({
+      where: {
+        createdAt: {
+          [Op.gt]: selectedRange
+        },
+        day: version
+      },
       attributes: [['studentId', 'studentId'], ['questionId', 'questionId']],
       group: ['studentId', 'questionId'],
       order: [['studentId', 'ASC'], ['questionId', 'ASC'],],
@@ -56,7 +89,7 @@ router.get('/evaluations-by-question', (req, res, next) => {
         return Evaluation
           .findAll({
             include: [{ model: Student },
-            { model: Question, include: [Exercise] }
+            { model: Question }
             ],
             limit: 1,
             where: {
@@ -106,9 +139,30 @@ router.get('/evaluations-by-question', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/evaluations-by-student', (req, res, next) => {
+router.get('/evaluations-by-student/', (req, res, next) => {
+  // Get Date Range interested in.
+  const rangeDate = req.query.range 
+  console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
+  const currentDate = new Date()
+  const selectedRange = new Date()
+
+  const range = {
+    'today': 1,
+    'lastWeek': 7,
+    'lastMonth': 30,
+    'lastYear': 365,
+    'allData': 365*5
+  }
+ 
+  selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+
   Evaluation
     .findAll({
+      where: {
+        createdAt: {
+          [Op.gt]: selectedRange
+        }
+      },
       attributes: [['studentId', 'studentId'], ['questionId', 'questionId']],
       group: ['studentId', 'questionId'],
       order: [['studentId', 'ASC'], ['questionId', 'ASC'],],
@@ -163,9 +217,32 @@ router.get('/evaluations-by-student', (req, res, next) => {
     .catch(error => next(error))
 })
 
-router.get('/stack-evaluations-by-student', (req, res, next) => {
+router.get('/stack-evaluations-by-student/', (req, res, next) => {
+
+  // Get Date Range interested in.
+  const rangeDate = req.query.range 
+  console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
+  const currentDate = new Date()
+  const selectedRange = new Date()
+
+  const range = {
+    'today': 1,
+    'lastWeek': 7,
+    'lastMonth': 30,
+    'lastYear': 365,
+    'allData': 365*5
+  }
+ 
+  selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+
   Evaluation
-  .findAll({attributes:[['studentId','studentId'], ['questionId','questionId']],
+  .findAll({
+    where: {
+      createdAt: {
+        [Op.gt]: selectedRange
+      }
+    },
+    attributes:[['studentId','studentId'], ['questionId','questionId']],
     group: ['studentId','questionId'],
     order:[['studentId', 'ASC'],['questionId', 'ASC'],],
     })
@@ -319,7 +396,7 @@ router.post('/evaluations', (req, res, next) => {
                 }
 
                 Evaluation
-                  .create(evaluation)
+                  .create({...evaluation, day})
                   .then(newEvaluation => newEvaluation)
               })
 
@@ -330,9 +407,32 @@ router.post('/evaluations', (req, res, next) => {
     })
 })
 
-router.get('/evaluations-by-question-student', (req, res, next) => {
+router.get('/evaluations-by-question-student/', (req, res, next) => {
+
+   // Get Date Range interested in.
+   const rangeDate = req.query.range 
+   console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
+   const currentDate = new Date()
+   const selectedRange = new Date()
+ 
+   const range = {
+     'today': 1,
+     'lastWeek': 7,
+     'lastMonth': 30,
+     'lastYear': 365,
+     'allData': 365*5
+   }
+  
+   selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+
   Evaluation
     .findAll({
+      where: {
+        createdAt: {
+          [Op.gt]: selectedRange
+        }
+      },
+
       attributes: [['studentId', 'studentId'], ['questionId', 'questionId']],
       group: ['studentId', 'questionId'],
       order: [['studentId', 'ASC'], ['questionId', 'ASC'],],
@@ -376,6 +476,37 @@ router.get('/evaluations-by-question-student', (req, res, next) => {
                 .catch(error => next(error))   
         )})
     })
+})
+
+router.get('/evaluations-by-date/:range', (req, res, next) => {
+  const rangeDate = req.params.range 
+
+  const currentDate = new Date()
+  const selectedRange = new Date()
+
+  const range = {
+    'today': 0,
+    'lastWeek': 7,
+    'lastMonth': 30,
+    'lastYear': 365
+  }
+ 
+  selectedRange.setDate(selectedRange.getDate() - range[rangeDate]);
+
+  console.log('SELECTED RANGE!!!!', selectedRange)
+
+  Evaluation
+    .findAll({
+      where: {
+        createdAt: {
+          [Op.gt]: selectedRange
+        }
+      }
+    })
+    .then( evaluations => {
+      res.status(200).send(evaluations)
+    })
+  
 })
 
 

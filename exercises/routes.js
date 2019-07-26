@@ -33,6 +33,15 @@ router.get('/exercises', (req, res, next) => {
   .catch(error => next(error))
 }) 
 
+router.get('/exercises/versions', (req, res, next) => { 
+  Exercise.findAll()
+  .then(exercises => {
+    const diffVersions = [...new Set(exercises.map(x => x.packageVersion))]
+    res.json(diffVersions)
+  })
+  .catch(error => next(error))
+}) 
+
 router.get('/exercises/:id', (req, res) => {
   const id = req.params.id
   Exercise.findByPk(id, { include: [Question] })
