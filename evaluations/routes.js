@@ -50,7 +50,6 @@ router.get('/evaluations-by-question/', (req, res, next) => {
   const rangeDate = req.query.range
   const version = req.query.version
 
-  console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
   const currentDate = new Date()
   const selectedRange = new Date()
 
@@ -136,7 +135,6 @@ router.get('/evaluations-by-student/', (req, res, next) => {
   const rangeDate = req.query.range 
   const version = req.query.version
 
-  console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
   const currentDate = new Date()
   const selectedRange = new Date()
 
@@ -156,7 +154,7 @@ router.get('/evaluations-by-student/', (req, res, next) => {
         createdAt: {
           [Op.gt]: selectedRange
         },
-      day: version
+        day: version
       },
       attributes: [['studentId', 'studentId'], ['questionId', 'questionId']],
       group: ['studentId', 'questionId'],
@@ -218,7 +216,6 @@ router.get('/stack-evaluations-by-student/', (req, res, next) => {
   const rangeDate = req.query.range 
   const version = req.query.version
 
-  console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
   const currentDate = new Date()
   const selectedRange = new Date()
 
@@ -238,7 +235,7 @@ router.get('/stack-evaluations-by-student/', (req, res, next) => {
       createdAt: {
         [Op.gt]: selectedRange
       },
-    day, version
+      day: version
     },
     attributes:[['studentId','studentId'], ['questionId','questionId']],
     group: ['studentId','questionId'],
@@ -410,8 +407,6 @@ router.get('/evaluations-by-question-student/', (req, res, next) => {
    // Get Date Range interested in.
    const rangeDate = req.query.range 
    const version = req.query.version
-
-   console.log('THIS RANGE!!!!!!!!!!!!!!!!', rangeDate)
    const currentDate = new Date()
    const selectedRange = new Date()
  
@@ -433,7 +428,6 @@ router.get('/evaluations-by-question-student/', (req, res, next) => {
         },
         day: version
       },
-
       attributes: [['studentId', 'studentId'], ['questionId', 'questionId']],
       group: ['studentId', 'questionId'],
       order: [['studentId', 'ASC'], ['questionId', 'ASC'],],
@@ -464,6 +458,7 @@ router.get('/evaluations-by-question-student/', (req, res, next) => {
             return evaluation[0].dataValues.passed === true
           })
           const questionsPassed = passedTotal.length
+          console.log('QUESTION', questionsPassed)
           return questionsPassed
 
             .then(
