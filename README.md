@@ -36,6 +36,12 @@ $ cd cont-testing-client
 $ npm install
 $ npm start
 
+Setting up a local DB
+You can set your own local database using Postgress and dockers. 
+
+Run this command:
+docker run -p 5432:5432 --name some-postgres -e POSTGRES_PASSWORD=secret -d postgres
+
 3) Run the exercise Data Transformation to get your own data.
 https://github.com/Official-Codaisseur-Graduate/data-transformation-exercise
 
